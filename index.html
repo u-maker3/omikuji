@@ -221,24 +221,14 @@ function loadCanvasImage(src){
 
 async function saveCard(){
   try{
-    if(!current){
-      alert("先におみくじ引いてな🤣");
-      return;
-    }
+    if(!current){ alert("先におみくじ引いてな🤣"); return; }
 
     const canvas=$("shareCanvas");
     const ctx=canvas.getContext("2d");
-    if(!ctx){
-      alert("画像を作る準備ができやんかった😭");
-      return;
-    }
+    if(!ctx){ alert("画像を作る準備ができやんかった😭"); return; }
 
-    const W=1080;
-    const pad=62;
-    const innerX=pad;
-    const innerW=W-pad*2;
-    const labelW=175;
-    const gap=24;
+    const W=1080, pad=64, innerX=pad, innerW=W-pad*2;
+    const labelW=170, gap=22;
     const textX=innerX+34+labelW+gap;
     const textWidth=innerX+innerW-34-textX;
 
@@ -248,87 +238,97 @@ async function saveCard(){
       ["今日やる",current.doit],["今日やめる",current.stop]
     ];
 
-    // 必要な高さを先に計算
+    // うめこ画像を先に読み込む
+    let umeImg=null;
+    try{
+      umeImg=await loadCanvasImage(current.sad?"UMEKO_SAD.PNG":"UMEKO_OMIKUJI.PNG");
+    }catch(e){
+      console.warn("うめこ画像の読み込み失敗",e);
+    }
+
+    // 各ブロックの高さ計算
     ctx.font='650 27px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
     let rowsHeight=0;
     items.forEach(([a,b])=>rowsHeight+=measureRow(ctx,a,b,textWidth));
 
     ctx.font='800 31px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
     const oracleLines=splitLines(ctx,"「"+current.oracle+"」",innerW-100);
-    const oracleH=70+oracleLines.length*48+34;
+    const oracleH=74+oracleLines.length*48+32;
 
     ctx.font='800 28px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
     const umekoLines=splitLines(ctx,'うめこ「'+current.umeko+'」',innerW-100);
-    const umekoH=Math.max(94,umekoLines.length*44+42);
+    const umekoH=Math.max(98,umekoLines.length*44+42);
 
-    // 保存画像にも、結果画面で使っているうめこ画像を入れる
-    let umeImg=null;
-    try{
-      umeImg=await loadCanvasImage(current.sad?"UMEKO_SAD.PNG":"UMEKO_OMIKUJI.PNG");
-    }catch(e){
-      console.warn("うめこ画像だけ読み込めやんかった",e);
-    }
-
-    const heroTop=185;
-    const heroH=270;
-    const cardTop=515;
-    const cardPadTop=26;
-    const cardPadBottom=30;
-    const cardH=cardPadTop+rowsHeight+oracleH+18+umekoH+cardPadBottom;
-    const footerH=110;
-    const H=Math.max(1750,cardTop+cardH+footerH);
+    const headerH=190;
+    const heroTop=215;
+    const heroH=390;
+    const cardTop=650;
+    const cardH=28+rowsHeight+oracleH+18+umekoH+32;
+    const H=Math.max(1900,cardTop+cardH+120);
 
     canvas.width=W;
     canvas.height=H;
 
     // 背景
-    ctx.fillStyle="#fffaf0";
+    ctx.fillStyle="#fff9eb";
     ctx.fillRect(0,0,W,H);
 
-    // 赤いタイトル帯は画像幅いっぱい。文字が切れないサイズに固定。
-    const grad=ctx.createLinearGradient(0,0,0,180);
-    grad.addColorStop(0,"#8d151e");
-    grad.addColorStop(1,"#a51d26");
-    ctx.fillStyle=grad;
-    ctx.fillRect(0,0,W,180);
+    // タイトル帯
+    const g=ctx.createLinearGradient(0,0,W,headerH);
+    g.addColorStop(0,"#7d1018");
+    g.addColorStop(.5,"#a51e27");
+    g.addColorStop(1,"#7d1018");
+    ctx.fillStyle=g;
+    ctx.fillRect(0,0,W,headerH);
 
+    // タイトル：鳥居絵文字を外して文字幅事故を防止
     ctx.textAlign="center";
-    ctx.textBaseline="alphabetic";
-    ctx.fillStyle="#ffffff";
-    ctx.font='900 50px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
-    ctx.fillText("⛩ 神さん、今日どない？",W/2,82);
+    ctx.textBaseline="middle";
+    ctx.fillStyle="#fff";
+    ctx.font='900 48px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    ctx.fillText("神さん、今日どない？",W/2,72);
 
     ctx.font='700 22px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
     ctx.fillStyle="rgba(255,255,255,.94)";
-    ctx.fillText("― 聞いたことを後悔するおみくじ ―",W/2,130);
+    ctx.fillText("― 聞いたことを後悔するおみくじ ―",W/2,132);
 
-    // うめこ＋ランク
+    // 小さい鳥居マーク
+    ctx.font='700 34px serif';
+    ctx.fillText("⛩",W/2,174);
+
+    // うめこを中央に大きく
     if(umeImg){
-      const maxW=235,maxH=235;
+      const maxW=290, maxH=250;
       const scale=Math.min(maxW/umeImg.naturalWidth,maxH/umeImg.naturalHeight);
-      const dw=umeImg.naturalWidth*scale,dh=umeImg.naturalHeight*scale;
-      ctx.drawImage(umeImg,95,heroTop+(heroH-dh)/2,dw,dh);
+      const dw=umeImg.naturalWidth*scale, dh=umeImg.naturalHeight*scale;
+      ctx.drawImage(umeImg,(W-dw)/2,heroTop,dw,dh);
     }
 
-    const rankCenterX=umeImg?680:W/2;
-    ctx.fillStyle="#78131a";
-    ctx.font='900 49px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
-    const rankLines=splitLines(ctx,current.rank,umeImg?600:900);
-    let ry=285-(rankLines.length-1)*30;
-    rankLines.forEach(line=>{ctx.fillText(line,rankCenterX,ry);ry+=60;});
+    // ランク
+    ctx.fillStyle="#8b1820";
+    ctx.font='900 52px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    const rankLines=splitLines(ctx,current.rank,880);
+    let rankY=umeImg?505:330;
+    rankLines.forEach(line=>{
+      ctx.fillText(line,W/2,rankY);
+      rankY+=62;
+    });
 
-    const date=new Intl.DateTimeFormat("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit"}).format(current.date);
+    // 名前＋日付
+    const date=new Intl.DateTimeFormat("ja-JP",{
+      year:"numeric",month:"2-digit",day:"2-digit"
+    }).format(current.date);
     ctx.fillStyle="#6b5845";
     ctx.font='600 24px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
-    const nameDate=(current.name?current.name+"さん　":"")+date;
-    ctx.fillText(nameDate,rankCenterX,395);
+    ctx.fillText((current.name?current.name+"さん　":"")+date,W/2,600);
 
     // 本文カード
-    roundRect(ctx,innerX,cardTop,innerW,cardH,28,"rgba(255,255,255,.93)","#d7a52f",3);
+    roundRect(ctx,innerX,cardTop,innerW,cardH,28,"rgba(255,255,255,.94)","#d7a52f",3);
 
-    let y=cardTop+cardPadTop;
-
+    let y=cardTop+28;
     ctx.textAlign="left";
+    ctx.textBaseline="alphabetic";
+
     for(const [label,text] of items){
       dashedLine(ctx,innerX+30,y,innerX+innerW-30);
       const rowH=measureRow(ctx,label,text,textWidth);
@@ -340,47 +340,32 @@ async function saveCard(){
       ctx.fillStyle="#35271e";
       ctx.font='650 27px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
       drawWrapped(ctx,text,textX,y+42,textWidth,42);
-
       y+=rowH;
     }
 
-    // 神の捨て台詞
     const oracleY=y+10;
     roundRect(ctx,innerX+28,oracleY,innerW-56,oracleH,20,"#f1dfb9",null);
     ctx.fillStyle="#35271e";
     ctx.font='800 28px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
-    ctx.fillText("⛩️ 神の捨て台詞",innerX+58,oracleY+48);
+    ctx.fillText("神の捨て台詞",innerX+58,oracleY+48);
     ctx.font='800 31px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
     drawWrapped(ctx,"「"+current.oracle+"」",innerX+58,oracleY+99,innerW-116,48);
 
-    // うめこ
     const umekoY=oracleY+oracleH+18;
-    roundRect(ctx,innerX+28,umekoY,innerW-56,umekoH,18,"#ffffff","#e9c85d",3);
+    roundRect(ctx,innerX+28,umekoY,innerW-56,umekoH,18,"#fff","#e9c85d",3);
     ctx.fillStyle="#35271e";
     ctx.font='800 28px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
     drawWrapped(ctx,'うめこ「'+current.umeko+'」',innerX+58,umekoY+54,innerW-116,44);
 
-    // フッター
     ctx.textAlign="center";
     ctx.fillStyle="#806d55";
     ctx.font='600 20px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
-    ctx.fillText("本日の正式神託｜娯楽用のおみくじです",W/2,H-52);
+    ctx.fillText("本日の正式神託｜娯楽用のおみくじです",W/2,H-54);
 
-    // PNG化
-    let png;
-    try{
-      png=canvas.toDataURL("image/png");
-    }catch(err){
-      console.error("toDataURL error",err);
-      alert("画像化でコケたわ😭");
-      return;
-    }
-
+    const png=canvas.toDataURL("image/png");
     if(!png || !png.startsWith("data:image/png")){
-      alert("保存画像を作れやんかった😭");
-      return;
+      alert("保存画像を作れやんかった😭"); return;
     }
-
     $("savedImage").src=png;
     $("saveModal").classList.remove("hidden");
 
@@ -389,7 +374,6 @@ async function saveCard(){
     alert("保存処理でコケたわ😭");
   }
 }
-
 function closeSave(e){
   if(e && e.target!==$("saveModal")) return;
   $("saveModal").classList.add("hidden");
