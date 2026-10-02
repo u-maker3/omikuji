@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7f1017">
+<title>神さん、今日どない？｜聞いたことを後悔するおみくじ</title>
+<style>
+:root{--red:#941d25;--deep:#4e0b10;--gold:#d7a52f;--cream:#fff8e8;--ink:#35271e;--line:#ead9b6}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;color:var(--ink);background:#efe3c7}
+.app{max-width:480px;min-height:100vh;margin:auto;background:
+radial-gradient(circle at 50% 0,#fff7d5 0 15%,transparent 36%),
+linear-gradient(180deg,#9b1821 0 15%,#fff7e7 15% 100%);position:relative;overflow:hidden}
+header{padding:18px 18px 22px;text-align:center;color:#fff}
+.kamon{font-size:24px}.title{font-family:serif;font-weight:900;font-size:29px;letter-spacing:.04em;margin:4px 0}.sub{font-size:12px;opacity:.9}
+main{padding:0 16px 36px}.card{background:rgba(255,253,245,.96);border:2px solid var(--gold);border-radius:24px;padding:20px 16px;box-shadow:0 14px 36px rgba(65,25,10,.18);text-align:center}
+.char{display:block;max-height:260px;max-width:88%;object-fit:contain;margin:0 auto 8px;filter:drop-shadow(0 8px 8px rgba(0,0,0,.12))}
+h2{font-family:serif;margin:8px 0 6px;font-size:23px}.lead{font-size:14px;line-height:1.8;margin:6px 0 14px}
+input{width:100%;border:1.5px solid #d9c69d;background:#fffdf8;border-radius:14px;padding:14px;font-size:16px;text-align:center;outline:none}
+button{width:100%;border:0;border-radius:999px;padding:15px 16px;margin-top:12px;font-weight:800;font-size:16px;cursor:pointer}
+.primary{background:linear-gradient(#b82b34,#7e1119);color:#fff;box-shadow:0 6px 0 #560a0f}
+.gold{background:linear-gradient(#f4d46d,#d5a62d);color:#4a3210;box-shadow:0 5px 0 #a77a17}
+.ghost{background:#fff;border:1.5px solid #d8c69d;color:#5c4837}
+.hidden{display:none!important}.loading{padding:36px 10px}.bell{font-size:60px;animation:ring .35s infinite alternate;transform-origin:50% 0}@keyframes ring{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+.status{font-weight:800;min-height:50px;margin-top:12px;line-height:1.7}
+.rank{font-family:serif;color:var(--red);font-size:28px;font-weight:900;margin:8px 0 2px}
+.official{font-size:11px;letter-spacing:.16em;color:#8b7352;font-weight:800}
+.resultBox{text-align:left;margin-top:14px}.row{padding:13px 4px;border-top:1px dashed #d8c9a7}.label{font-size:12px;color:#9a1d25;font-weight:900;margin-bottom:4px}.text{font-size:15px;line-height:1.65;font-weight:650}
+.oracle{margin:16px 0 4px;padding:17px 13px;background:#f5ead0;border:1px solid #dbc08a;border-radius:16px;font-family:serif;font-size:18px;font-weight:800;line-height:1.7}
+.umeko{margin-top:12px;background:#fff;border:2px solid #e9c85d;border-radius:16px;padding:12px;font-weight:800;line-height:1.6}
+.retrial{font-size:12px;color:#8d7559;margin-top:12px;min-height:20px}.rare{background:linear-gradient(135deg,#fff9cf,#fff,#ffe5a3)}
+footer{text-align:center;font-size:10px;color:#8a775f;padding:18px}
+#shareCanvas{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="kamon">⛩️</div><div class="title">神さん、今日どない？</div><div class="sub">― 聞いたことを後悔するおみくじ ―</div></header>
+<main>
+<section id="top" class="card">
+<img class="char" src="UMEKO_HELLO.PNG" alt="うめこ">
+<h2>神さん呼ぶで。</h2>
+<p class="lead">聞く覚悟できてる？<br>ええことだけ言うとは限らんで。</p>
+<input id="name" maxlength="12" placeholder="名前（入れんでもええ）">
+<button class="primary" onclick="startDraw()">神さまを呼び出す</button>
+</section>
+
+<section id="loading" class="card hidden loading">
+<img class="char" src="UMEKO_PRAY.PNG" alt="神さま接続中">
+<div class="bell">🔔</div><div id="status" class="status">神さまに接続しています…</div>
+</section>
+
+<section id="result" class="card hidden">
+<div class="official">本日の正式神託</div>
+<img id="resultChar" class="char" src="UMEKO_OMIKUJI.PNG" alt="結果">
+<div id="rank" class="rank"></div><div id="who"></div>
+<div id="rows" class="resultBox"></div>
+<div id="oracle" class="oracle"></div>
+<div id="umeko" class="umeko"></div>
+<div id="retrial" class="retrial"></div>
+<button class="gold" onclick="saveCard()">証拠として保存</button>
+<button class="ghost" onclick="shareResult()">友だちにも神託を食らわせる</button>
+<button class="primary" onclick="startDraw()">もう一回、神を呼ぶ</button>
+</section>
+<canvas id="shareCanvas" width="1080" height="1350"></canvas>
+</main>
+<footer>娯楽用のおみくじです。人生の重要事項は神に丸投げせんと自分でも考えてな。</footer>
+</div>
+<script>
+const pools={
+overall:[
+"今日は勢いより機嫌。機嫌よう動いた方がだいたいうまくいく。",
+"全部正解にしようとすな。ひとつ進んだら今日は合格。",
+"妙に気になること、それ一回見に行ってみ。答えは現場に落ちてる。",
+"今日は余白が仕事する日。予定パンパンにしたら神も入る隙ない。",
+"人のペース見て焦る必要なし。あんたの時計で進め。",
+"思いついたら小さく着手。壮大な計画書はいらん。",
+"今日は『まあええか』が救命ボートになる。",
+"無理に盛り上げんでええ。静かにええ日も立派なええ日。",
+"後回し一個だけ倒したら流れ変わる。全部は倒さんでええ。",
+"迷ったら簡単な方から。難しくしてる犯人、だいたい自分。",
+"予定外が入ってもキレんな。そっちが本日の本編かもしれん。",
+"今日は見栄より実用。映えんでも役に立ったら勝ち。",
+"言うほど悪くない。脳内会議が大げさなだけ。",
+"焦って決めるより一晩寝かせ。漬物ちゃうけど。",
+"今日は一個断ると一個入ってくる。席を空けとけ。",
+"ちゃんと休むまでが予定。休憩をサボるな。",
+"小さいラッキー拾える日。でっかい奇跡待って見逃すな。",
+"誰かの正解より、自分が続けられる方を選べ。",
+"今日の敵は完璧主義。七割で出してから考え。",
+"なんとなく嫌、は一旦保留で正解。無理に好きにならんでええ。",
+"機嫌悪い時に人生決めるな。まずなんか食べ。",
+"やること増やすより、やらんこと決めた方が早い。",
+"今日は説明しすぎ注意。分かる人には短くても分かる。",
+"一回外の空気吸え。答えが出るとは言うてへん。気分は変わる。",
+"人に会うなら気楽な人。圧強めは本日休業。",
+"昨日の失敗、今日まで連れてこんでええ。",
+"なんかいけそう。その『なんか』を雑に扱うな。",
+"気になる連絡は早めに返せ。寝かせても旨味は増えへん。",
+"今日は足し算より引き算。減らしたら急に見える。",
+"知らんけど、思ってるよりちゃんと進んでる。"
+],
+work:[
+"全部今日やろうとすな。誰も頼んでへん。",
+"メール一通、電話一本。小さい用事から首根っこ掴め。",
+"頼まれてない仕事まで背負うな。善意の過積載や。",
+"今日は新規より仕上げ。途中のやつ成仏させ。",
+"完璧な資料より伝わる一言。相手は論文読みに来てへん。",
+"返事待ちを自分の責任にすな。ボールはもう向こうや。",
+"苦手なやつ午前中に一個だけ。午後の自分が拍手する。",
+"会議で黙りすぎるな。ひと言でええから置いてこい。",
+"今日は段取り八分。いきなり突撃したら二度手間。",
+"誰かに聞いた方が5分で済む。孤独な二時間を選ぶな。",
+"仕事量より順番。火事から消せ。",
+"やる気待ちは欠勤扱い。手だけ先に動かせ。",
+"締切ない仕事ほど今日10分だけ触れ。",
+"今日は見直しが効く。送信ボタンの前に一回読め。",
+"他人の雑さまで回収せんでええ。担当者に返却。",
+"得意なことから勢いつけて、そのまま苦手へ滑り込め。",
+"予定を詰めるより終了時刻を決めろ。",
+"仕事の悩みを夜中に育てるな。営業時間外や。",
+"今日の『あとで』は怪しい。2分で済むなら今。",
+"頼む時は具体的に。察して大会は職場でも中止。",
+"成果出したら自分で認識しろ。誰かの拍手待ち禁止。",
+"忙しいと偉いは別物。暇を作れる方が強い。",
+"一個終わらせてからタブ開け。脳みそ渋滞してる。",
+"今日は愛想より確認。数字と日時は二回見ろ。",
+"苦手な相手には短く丁寧。それ以上サービスせんでよし。",
+"思いつきメモしとけ。今日の雑案、後で化けるかもしれん。",
+"休憩削っても能率は神にならん。",
+"誰かの急ぎが、あんたの緊急とは限らん。",
+"今日は『ここまで』を決める仕事も仕事。",
+"終わったら帰れ。居残り選手権ちゃう。"
+],
+money:[
+"安いから買う、が一番高くつく日。",
+"財布開く前に一回閉じろ。",
+"ポイント5倍に人生預けんな。",
+"送料無料にするため余計に買うな。送料払った方が安い。",
+"臨時収入より固定費。地味なとこに金おる。",
+"欲しいと必要を同じカゴに入れるな。",
+"今日は値段より使用回数で考え。",
+"買うなら長く使うもん。謎の便利グッズは寝かせ。",
+"セールの赤文字に人格乗っ取られるな。",
+"小銭でも残したら勝ち。金運は派手さだけちゃう。",
+"人付き合いの見栄出費、本日は却下。",
+"払うべきもんは気持ちよく払え。未払いは運より通知が来る。",
+"サブスク一個見直したら神より確実。",
+"財布の中のレシート、そろそろ退去命令。",
+"欲しいもんは24時間寝かせ。まだ欲しかったら再審。",
+"今日は現金の流れを一回見るだけでええ。",
+"節約しすぎて機嫌悪なるなら、適量使え。",
+"ケチる場所そこちゃう。身体と道具は雑に削るな。",
+"ご褒美はええ。毎日記念日にするな。",
+"投資話は勢いで決めんな。分からんもんに金入れるな。",
+"予算決めてから店入れ。店で予算を決めるな。",
+"一円単位より大きい固定費。敵を間違えるな。",
+"今日の金運は『買わんかった』にも宿る。",
+"人のおすすめより自分が使うかどうか。",
+"壊れてへんもん買い替えたくなる病、今日は様子見。",
+"カード明細はホラーちゃう。ちゃんと見ろ。",
+"お得情報追いすぎて時間を失うな。時間も資産。",
+"必要経費と衝動買いを同じ顔で申告すな。",
+"使う時は使う、締める時は締める。全部我慢大会にすな。",
+"今日は財布より判断力を守れ。"
+],
+love:[
+"察してほしい大会、本日も開催中止。",
+"好きなら好きでええ。脳内で勝手に最終回まで作るな。",
+"返信速度で愛情測定すな。通信環境まで恋愛に入ってくる。",
+"言いたいことは可愛く言え。試すな。",
+"追いかけすぎたら一回止まれ。恋にも信号ある。",
+"昔の人を美化するな。記憶には加工フィルター付いてる。",
+"不安な時ほど結論急ぐな。",
+"会いたいなら会いたいでええ。駆け引きで迷子になるな。",
+"相手の機嫌を恋愛運に含めるな。",
+"今日は聞く方が進む。尋問にはするな。",
+"理想条件を増やしすぎて入場審査にするな。",
+"好きと都合がいいは別物。そこ見分けろ。",
+"言葉より行動。両方あるならなお良し。",
+"連絡したいなら普通にしろ。暗号文送るな。",
+"無理して好かれるより素で嫌われる方が後が楽。",
+"嫉妬でストーリー作る前に事実確認。",
+"今日は盛るより素直。かわいげ出しとけ。",
+"相手を変える計画より、自分の希望を伝え。",
+"寂しいだけの日に運命認定すな。",
+"一緒にいて疲れるなら、その疲れも情報。",
+"愛情は我慢大会の参加賞ちゃう。",
+"いい感じなら余計なテストを仕掛けるな。",
+"返事来ん時間に人生全部否定された顔すな。",
+"今日は自分を雑に扱う人を追わんでええ。",
+"恋愛以外が充実してても全然ええ日。",
+"笑える相手、大事にしとけ。",
+"好きな人の前で別人になるな。維持費高い。",
+"言わんと分からんことは普通にある。口使え。",
+"縁は追うだけやなく、育てるもん。",
+"今日は恋より自分のご機嫌取る方が先。"
+],
+people:[
+"その人の機嫌まで担当せんでよろしい。",
+"嫌われん努力より、雑に扱われん線引き。",
+"返事に困る話は即答せんでええ。",
+"今日は聞き役七割。背負うのはゼロ割。",
+"圧強い人からは半歩離れ。物理でも心でも。",
+"全員に分かってもらう企画、予算不足で中止。",
+"人の課題まで持ち帰るな。忘れ物として置いてこい。",
+"気楽に話せる人に連絡すると回復する。",
+"モヤっとしたら言葉より距離調整。",
+"噂話に参加しても配当ないで。",
+"ありがとうは早めに。ごめんは必要な分だけ。",
+"頼まれごと、反射で『いいよ』言うな。",
+"今日は説明しても通じん相手を説得せんでええ。",
+"合わん人がおるのは故障ちゃう。",
+"相手の沈黙を勝手に悪訳すな。",
+"会った後ぐったりする人、頻度見直せ。",
+"気遣いと自己犠牲は親戚ちゃう。",
+"褒められたら否定せず受け取れ。返却不可。",
+"今日は人脈より一人とのちゃんとした会話。",
+"言い方ひとつで丸くなる。内容まで曲げんでええ。",
+"苦手な人の分析に時間使いすぎ。",
+"自分を大事にしてくれる人を後回しにすな。",
+"連絡途絶えてる人、必要なら一回だけ軽く投げてみ。",
+"距離置くことも立派なコミュ力。",
+"人の期待を全部叶えたら、自分が留守になる。",
+"今日は余計な一言を飲み込めたら優勝。",
+"相談されたら答えより確認。相手も自分で決めたい。",
+"誰とでも仲良く、は神でも無理。",
+"無理な誘いは断ってええ。予定なしも予定。",
+"大事な人には雑な安心感で雑にせんようにな。"
+],
+doit:["水飲む。まずそこ。","机の上を一か所だけ片付ける。","気になってる連絡を一件返す。","10分だけ外に出る。","今日できたことを三つ数える。","財布の中を見る。怖がるな。","一個だけ断る。","一個だけ終わらせる。","風呂を後回しにせん。","スマホ置いて5分ぼーっとする。","明日の自分にメモを残す。","お気に入りの服を着る。","不要な通知を一個切る。","深呼吸より先に肩を下げる。","食べたいもんをちゃんと食べる。","バッグの中のゴミを出す。","写真フォルダを10枚だけ整理。","誰かにありがとうを送る。","今日の終了時刻を決める。","気になる案をメモする。","靴を揃える。急に神社感。","一回伸びる。猫くらい伸びる。","窓を開ける。","必要な予約を一個取る。","寝る前の充電を忘れん。自分もスマホも。","明日着る服を出す。","やらんことを一個決める。","笑える動画一本だけ見る。一本やぞ。","使ってないアプリ一個消す。","今日は早めに寝る準備だけでもする。"],
+stop:["夜中のネットショッピング。","返事来てないのに追撃三連投。","他人のSNS見て勝手に落ち込む。","全部自分でやる。","腹減ってる時の重大決断。","『どうせ私なんか』の長期公演。","ポイントのための無駄買い。","寝る直前の仕事開始。","昔の黒歴史再上映会。","頼まれてない反省会。","他人の機嫌当てクイズ。","検索しすぎて不安を育てる。","予定の詰め放題。","嫌なことを笑ってごまかす。","一回断られただけで人生終了扱い。","返信文を30分推敲する。","なんでも意味づけする。","『せっかくやから』で余計に買う。","休憩中に仕事する。","会ってない人と脳内喧嘩。","今日の失敗を来月まで持つ。","他人の成功を自分の遅れに換算。","寝不足で元気なフリ。","無料やから貰う。使わんやろ。","一人で結論まで暴走する。","嫌な予感を事実認定する。","5分の用事を5日寝かす。","なんとなくスマホを開く30回目。","食べずに機嫌直そうとする。","神託を都合ええとこだけ採用する。"]
+};
+const oracles=["まあ行ける。知らんけど。","それ、占う前にだいたい答え出てるで。","欲張らんかったら今日は平和。","神も全部は知らん。あんたも知らんでええ。","迷うんやったら、小さい方から試せ。","今日の正解は明日変わる。とりあえず今日をやれ。","無理なもんは無理。そこから考え。","機嫌よう生きたら、それでだいぶ吉。","人の人生まで背負って来るな。重い。","一回寝たら半分どうでもようなる。","やるならやる。やらんなら今日はやらん。それでええ。","その不安、まだ現実になってへんで。","焦るな。神も走ってへん。","知らんことまで決めつけるな。","今日くらい自分の味方しとき。","ちゃんと断れたら、それも開運。","大丈夫とは言わん。でも案外なんとかするやろ。","一個片付けたら次が見える。まず一個。","考えすぎて答え擦り減ってるで。","もう十分考えた。次は動く番。","それ、ほんまにあんたの仕事か？","期待しすぎず、諦めすぎず。","運より睡眠足りてる？","誰かの正解を盗んでもサイズ合わんで。","今日は派手な奇跡より小さい助かったを拾え。","腹立ってる時は送信禁止。神命令。","うまくいかん日も通常営業。","やり直せることを終末扱いすな。","ええから一回水飲め。","最終的には、あんたが決め。"];
+const umeko=["ほな、ぼちぼちいこか。","神さん言うてるけど、採用するかはあんた次第やで。","知らんけど、今日はこれでいこ🤣","神託より先に腹ごしらえちゃう？","それな。うめこも耳痛いわ。","はい、本日の神さんちょい辛口。","ええやん。1ミリで十分や。","神さん、急に現実的やな。","それ出来たら今日は花丸。","無理せん程度にやったれ。","今日は静かに勝ちにいこ。","神に言われんでも分かってたやろ🤣","ほな、余計なもん置いてこ。","大吉待ちせんと、自分でええ日にしよ。","なんか知らんけど、いけそうや。","今日はこれ以上こねくり回さん。","ちゃんと休むんも仕事やで。","神さんより自分の違和感も聞いとき。","全部せんでええ。一個でええ。","はい、神託終了。解散🤣","結果に文句ある人は再審どうぞ。","まあまあ、そんな日もある。","自分の機嫌は自分で回収しよ。","それ、明日のうめこにも言うといて。","運勢より行動ひとつ。これ強い。","神さん、今日ええこと言うやん。","ちょっと笑えたらもう半分勝ち。","知らんけどを付けたら大体やさしくなる。","今日も生きてる。それでまず一票。","ほな、行ってらっしゃい。気ぃつけてな。"];
+const ranks=["超・知らんけど大吉","なんかイケる吉","欲出すな吉","今日は寝とけ吉","調子乗んな吉","黙っといた方が吉","神もよう分からん吉","一回帰ろか凶","先に片付けろ凶","今日は触んな凶"];
+const retry=["","再審請求を受理しました。","まだ納得してへんのか。","神への圧が強い。","好きなん出るまで引く気やろ。","もう結果より執念が勝ってる。"];
+let count=0,current=null;
+const $=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)];
+function show(id){["top","loading","result"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
+function startDraw(){
+ count++; show("loading");
+ const msgs=["神さまに接続しています…","神さま、まだ寝てる可能性があります。","少々お待ちください。","既読は付きました。","なんとか捕まりました。"];
+ let i=0;$("status").textContent=msgs[0];
+ const t=setInterval(()=>{i++; if(i<msgs.length)$("status").textContent=msgs[i];else{clearInterval(t);draw()}},520);
+}
+function draw(){
+ const rareRoll=Math.random();
+ let special=null;
+ if(rareRoll<.008)special={rank:"神、留守。",oracle:"本日の営業は終了しました。自分の人生くらい自分で決めてください。",sad:true};
+ else if(rareRoll<.016)special={rank:"神、既読無視。",oracle:"見てはいます。返事するとは言うてません。",sad:true};
+ else if(rareRoll<.024)special={rank:"神、回答拒否。",oracle:"それ聞いてどうすんねん。",sad:true};
+ else if(rareRoll<.032)special={rank:"神、逆質問。",oracle:"で、あんたはどうしたいん。",sad:false};
+ else if(rareRoll<.040)special={rank:"神、呆れる。",oracle:"昨日も同じことで悩んでへん？",sad:true};
+ else if(rareRoll<.045)special={rank:"神、降臨。",oracle:"来たけど、特にない。",sad:false};
+ else if(rareRoll<.050)special={rank:"🌈 超・知らんけど大吉 🌈",oracle:"今日は何しても知らん。せやけど、なんかいけそう。根拠：ない。",sad:false};
+ current={rank:special?.rank||pick(ranks),overall:pick(pools.overall),work:pick(pools.work),money:pick(pools.money),love:pick(pools.love),people:pick(pools.people),doit:pick(pools.doit),stop:pick(pools.stop),oracle:special?.oracle||pick(oracles),umeko:special?.rank==="神、降臨。"?"帰るんかい。":pick(umeko),sad:special?.sad||false,name:$("name").value.trim(),date:new Date()};
+ render();
+}
+function render(){
+ show("result"); $("rank").textContent=current.rank;
+ $("who").textContent=current.name?current.name+"さんへの神託":"";
+ $("resultChar").src=current.sad?"UMEKO_SAD.PNG":"UMEKO_OMIKUJI.PNG";
+ const data=[["総合運",current.overall],["仕事",current.work],["金",current.money],["恋愛",current.love],["人間関係",current.people],["今日やること",current.doit],["今日やめとくこと",current.stop]];
+ $("rows").innerHTML=data.map(x=>`<div class="row"><div class="label">${x[0]}</div><div class="text">${x[1]}</div></div>`).join("");
+ $("oracle").innerHTML="⛩️ 神の捨て台詞<br>「"+current.oracle+"」";
+ $("umeko").textContent="うめこ「"+current.umeko+"」";
+ $("retrial").textContent=retry[Math.min(count-1,retry.length-1)];
+}
+function wrap(ctx,text,x,y,max,w=44,line=58){
+ let s="",yy=y; for(const ch of text){if(ctx.measureText(s+ch).width>max){ctx.fillText(s,x,yy);s=ch;yy+=line}else s+=ch} if(s)ctx.fillText(s,x,yy);return yy+line;
+}
+async function saveCard(){
+ const c=$("shareCanvas"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);
+ const g=ctx.createLinearGradient(0,0,0,1350);g.addColorStop(0,"#8d151e");g.addColorStop(.22,"#fff0c7");g.addColorStop(1,"#fffaf0");ctx.fillStyle=g;ctx.fillRect(0,0,1080,1350);
+ ctx.textAlign="center";ctx.fillStyle="#fff";ctx.font="bold 56px serif";ctx.fillText("神さん、今日どない？",540,90);
+ ctx.fillStyle="#4d0e12";ctx.font="bold 58px serif";ctx.fillText(current.rank,540,205);
+ ctx.font="28px sans-serif";ctx.fillStyle="#5b4938";ctx.fillText((current.name?current.name+"さん　":"")+new Intl.DateTimeFormat("ja-JP").format(current.date),540,255);
+ ctx.textAlign="left";ctx.fillStyle="#35271e";ctx.font="bold 34px sans-serif";
+ let y=330; const items=[["総合",current.overall],["仕事",current.work],["金",current.money],["恋愛",current.love],["人間関係",current.people],["やる",current.doit],["やめる",current.stop]];
+ for(const [lab,txt] of items){ctx.fillStyle="#941d25";ctx.fillText(lab,75,y);ctx.fillStyle="#35271e";y=wrap(ctx,txt,210,y,790,32,48)+12}
+ ctx.fillStyle="#f1dfb9";ctx.fillRect(55,y,970,170);ctx.fillStyle="#4d351d";ctx.font="bold 31px serif";ctx.fillText("神「"+current.oracle+"」",85,y+55);ctx.font="bold 28px sans-serif";wrap(ctx,"うめこ「"+current.umeko+"」",85,y+112,900,28,40);
+ c.toBlob(blob=>{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="KAMISAN_OMIKUJI.PNG";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)},"image/png");
+}
+async function shareResult(){
+ const text=`⛩️ 神さん、今日どない？\n【${current.rank}】\n神「${current.oracle}」\nうめこ「${current.umeko}」`;
+ if(navigator.share){try{await navigator.share({title:"神さん、今日どない？",text,url:location.href})}catch(e){}}else{await navigator.clipboard.writeText(text+"\n"+location.href);alert("結果をコピーしたで。友だちに食らわせてきて🤣")}
+}
+</script>
+</body></html>
