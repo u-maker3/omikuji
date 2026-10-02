@@ -285,54 +285,73 @@ function render(){
 function wrap(ctx,text,x,y,max,w=44,line=58){
  let s="",yy=y; for(const ch of text){if(ctx.measureText(s+ch).width>max){ctx.fillText(s,x,yy);s=ch;yy+=line}else s+=ch} if(s)ctx.fillText(s,x,yy);return yy+line;
 }
+function esc(s){
+ return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
 function saveCard(){
  try{
    if(!current){ alert("先におみくじ引いてな🤣"); return; }
-   const c=$("shareCanvas");
-   const ctx=c.getContext("2d");
-   ctx.clearRect(0,0,c.width,c.height);
 
-   const g=ctx.createLinearGradient(0,0,0,1350);
-   g.addColorStop(0,"#8d151e"); g.addColorStop(.22,"#fff0c7"); g.addColorStop(1,"#fffaf0");
-   ctx.fillStyle=g; ctx.fillRect(0,0,1080,1350);
-
-   ctx.textAlign="center";
-   ctx.fillStyle="#fff"; ctx.font="bold 56px serif";
-   ctx.fillText("神さん、今日どない？",540,90);
-
-   ctx.fillStyle="#4d0e12"; ctx.font="bold 58px serif";
-   ctx.fillText(current.rank,540,205);
-
-   ctx.font="28px sans-serif"; ctx.fillStyle="#5b4938";
-   ctx.fillText((current.name?current.name+"さん　":"")+new Intl.DateTimeFormat("ja-JP").format(current.date),540,255);
-
-   ctx.textAlign="left"; ctx.font="bold 34px sans-serif";
-   let y=330;
+   const date=new Intl.DateTimeFormat("ja-JP").format(current.date);
    const items=[
-     ["総合",current.overall],["仕事",current.work],["金",current.money],
+     ["総合運",current.overall],["仕事",current.work],["金",current.money],
      ["恋愛",current.love],["人間関係",current.people],
-     ["やる",current.doit],["やめる",current.stop]
+     ["今日やる",current.doit],["今日やめる",current.stop]
    ];
-   for(const [lab,txt] of items){
-     ctx.fillStyle="#941d25"; ctx.fillText(lab,75,y);
-     ctx.fillStyle="#35271e";
-     y=wrap(ctx,txt,210,y,790,32,48)+12;
-   }
 
-   ctx.fillStyle="#f1dfb9"; ctx.fillRect(55,y,970,190);
-   ctx.fillStyle="#4d351d"; ctx.font="bold 31px serif";
-   wrap(ctx,"神「"+current.oracle+"」",85,y+55,900,31,44);
-   ctx.font="bold 28px sans-serif";
-   wrap(ctx,"うめこ「"+current.umeko+"」",85,y+125,900,28,40);
+   const rows=items.map(([a,b])=>`
+     <div style="display:grid;grid-template-columns:170px 1fr;gap:18px;padding:16px 4px;border-top:1px dashed #d8c9a7;line-height:1.55;"><b style="color:#941d25;font-size:23px;">${esc(a)}</b><span style="font-size:25px;font-weight:650;">${esc(b)}</span></div>`).join("");
 
-   const dataURL=c.toDataURL("image/png");
-   const img=$("savedImage");
-   img.src=dataURL;
-   $("saveModal").classList.remove("hidden");
-   setTimeout(()=>img.scrollIntoView({behavior:"smooth",block:"center"}),50);
+   const card=`
+   <div xmlns="http://www.w3.org/1999/xhtml" style="
+     width:1000px;min-height:1250px;padding:60px;box-sizing:border-box;
+     background:linear-gradient(#8d151e 0 150px,#fff0c7 150px,#fffaf0 420px);
+     font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;
+     color:#35271e;">
+     <div style="text-align:center;color:white;font-family:serif;font-weight:900;font-size:54px;">神さん、今日どない？</div>
+     <div style="margin:70px 0 6px;text-align:center;color:#78131a;font-family:serif;font-weight:900;font-size:55px;">${esc(current.rank)}</div>
+     <div style="text-align:center;color:#6b5845;font-size:25px;margin-bottom:28px;">${esc(current.name?current.name+"さん　":"")}${esc(date)}</div>
+     <div style="background:rgba(255,255,255,.84);border:2px solid #d7a52f;border-radius:28px;padding:24px 34px;">
+       ${rows}
+       <div style="margin-top:24px;padding:24px;background:#f1dfb9;border-radius:20px;font-family:serif;font-size:29px;font-weight:800;line-height:1.65;">⛩️ 神の捨て台詞<br/>「${esc(current.oracle)}」</div>
+       <div style="margin-top:16px;padding:20px;background:white;border:2px solid #e9c85d;border-radius:18px;font-size:26px;font-weight:800;line-height:1.6;">うめこ「${esc(current.umeko)}」</div>
+     </div>
+     <div style="text-align:center;color:#806d55;font-size:18px;margin-top:28px;">聞いたことを後悔するおみくじ</div>
+   </div>`;
+
+   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1500">
+     <foreignObject width="1000" height="1500">${card}</foreignObject>
+   </svg>`;
+
+   const blob=new Blob([svg],{type:"image/svg+xml;charset=utf-8"});
+   const url=URL.createObjectURL(blob);
+   const image=new Image();
+
+   image.onload=()=>{
+     try{
+       const c=document.createElement("canvas");
+       c.width=1000;c.height=1500;
+       const ctx=c.getContext("2d");
+       ctx.fillStyle="#fffaf0";ctx.fillRect(0,0,c.width,c.height);
+       ctx.drawImage(image,0,0);
+       URL.revokeObjectURL(url);
+       const png=c.toDataURL("image/png");
+       $("savedImage").src=png;
+       $("saveModal").classList.remove("hidden");
+     }catch(err){
+       console.error(err);
+       URL.revokeObjectURL(url);
+       alert("画像化でコケたわ😭");
+     }
+   };
+   image.onerror=()=>{
+     URL.revokeObjectURL(url);
+     alert("保存画像を作れやんかった😭");
+   };
+   image.src=url;
  }catch(err){
    console.error(err);
-   alert("保存画像づくりでコケたわ😭 もう一回押してみてな。");
+   alert("保存処理でコケたわ😭");
  }
 }
 function closeSave(e){
