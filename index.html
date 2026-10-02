@@ -205,9 +205,9 @@ function dashedLine(ctx,x1,y,x2){
 }
 
 function measureRow(ctx,label,text,textWidth){
-  ctx.font='650 27px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+  ctx.font='650 32px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
   const lines=splitLines(ctx,text,textWidth);
-  return Math.max(72,lines.length*42+26);
+  return Math.max(88,lines.length*48+30);
 }
 
 function loadCanvasImage(src){
@@ -247,15 +247,15 @@ async function saveCard(){
     }
 
     // 各ブロックの高さ計算
-    ctx.font='650 27px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    ctx.font='650 32px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
     let rowsHeight=0;
     items.forEach(([a,b])=>rowsHeight+=measureRow(ctx,a,b,textWidth));
 
-    ctx.font='800 31px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    ctx.font='800 36px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
     const oracleLines=splitLines(ctx,"「"+current.oracle+"」",innerW-100);
     const oracleH=74+oracleLines.length*48+32;
 
-    ctx.font='800 28px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    ctx.font='800 32px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
     const umekoLines=splitLines(ctx,'うめこ「'+current.umeko+'」',innerW-100);
     const umekoH=Math.max(98,umekoLines.length*44+42);
 
@@ -302,18 +302,18 @@ async function saveCard(){
 
     // うめこは空いている右側へ。タイトル・結果の中央揃えには影響させない。
     if(umeImg){
-      const maxW=220, maxH=220;
+      const maxW=310, maxH=310;
       const scale=Math.min(maxW/umeImg.naturalWidth,maxH/umeImg.naturalHeight);
       const dw=umeImg.naturalWidth*scale, dh=umeImg.naturalHeight*scale;
-      ctx.drawImage(umeImg,W-dw-72,heroTop+8,dw,dh);
+      ctx.drawImage(umeImg,W-dw-55,heroTop-5,dw,dh);
     }
 
     // ランクは画像の有無に関係なく画像全体の中央
     ctx.textAlign="center";
     ctx.fillStyle="#8b1820";
-    ctx.font='900 52px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
-    const rankLines=splitLines(ctx,current.rank,820);
-    let rankY=420;
+    ctx.font='900 62px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    const rankLines=splitLines(ctx,current.rank,760);
+    let rankY=430;
     rankLines.forEach(line=>{
       ctx.fillText(line,W/2,rankY);
       rankY+=62;
@@ -324,8 +324,8 @@ async function saveCard(){
       year:"numeric",month:"2-digit",day:"2-digit"
     }).format(current.date);
     ctx.fillStyle="#6b5845";
-    ctx.font='600 24px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
-    ctx.fillText((current.name?current.name+"さん　":"")+date,W/2,570);
+    ctx.font='700 30px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    ctx.fillText((current.name?current.name+"さん　":"")+date,W/2,585);
 
     // 本文カード
     roundRect(ctx,innerX,cardTop,innerW,cardH,28,"rgba(255,255,255,.94)","#d7a52f",3);
@@ -339,32 +339,32 @@ async function saveCard(){
       const rowH=measureRow(ctx,label,text,textWidth);
 
       ctx.fillStyle="#941d25";
-      ctx.font='900 25px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
-      ctx.fillText(label,innerX+34,y+46);
+      ctx.font='900 31px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+      ctx.fillText(label,innerX+34,y+50);
 
       ctx.fillStyle="#35271e";
-      ctx.font='650 27px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
-      drawWrapped(ctx,text,textX,y+42,textWidth,42);
+      ctx.font='650 32px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+      drawWrapped(ctx,text,textX,y+48,textWidth,48);
       y+=rowH;
     }
 
     const oracleY=y+10;
     roundRect(ctx,innerX+28,oracleY,innerW-56,oracleH,20,"#f1dfb9",null);
     ctx.fillStyle="#35271e";
-    ctx.font='800 28px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    ctx.font='800 34px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
     ctx.fillText("神の捨て台詞",innerX+58,oracleY+48);
-    ctx.font='800 31px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
-    drawWrapped(ctx,"「"+current.oracle+"」",innerX+58,oracleY+99,innerW-116,48);
+    ctx.font='800 36px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    drawWrapped(ctx,"「"+current.oracle+"」",innerX+58,oracleY+108,innerW-116,52);
 
     const umekoY=oracleY+oracleH+18;
     roundRect(ctx,innerX+28,umekoY,innerW-56,umekoH,18,"#fff","#e9c85d",3);
     ctx.fillStyle="#35271e";
-    ctx.font='800 28px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
-    drawWrapped(ctx,'うめこ「'+current.umeko+'」',innerX+58,umekoY+54,innerW-116,44);
+    ctx.font='800 32px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    drawWrapped(ctx,'うめこ「'+current.umeko+'」',innerX+58,umekoY+60,innerW-116,48);
 
     ctx.textAlign="center";
     ctx.fillStyle="#806d55";
-    ctx.font='600 20px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    ctx.font='600 24px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
     ctx.fillText("本日の正式神託｜娯楽用のおみくじです",W/2,H-54);
 
     const png=canvas.toDataURL("image/png");
