@@ -285,8 +285,12 @@ async function saveCard(){
     ctx.textAlign="center";
     ctx.textBaseline="middle";
     ctx.fillStyle="#fff";
+    ctx.save();
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
     ctx.font='900 48px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
     ctx.fillText("神さん、今日どない？",W/2,72);
+    ctx.restore();
 
     ctx.font='700 22px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
     ctx.fillStyle="rgba(255,255,255,.94)";
@@ -296,19 +300,20 @@ async function saveCard(){
     ctx.font='700 34px serif';
     ctx.fillText("⛩",W/2,174);
 
-    // うめこを中央に大きく
+    // うめこは空いている右側へ。タイトル・結果の中央揃えには影響させない。
     if(umeImg){
-      const maxW=290, maxH=250;
+      const maxW=220, maxH=220;
       const scale=Math.min(maxW/umeImg.naturalWidth,maxH/umeImg.naturalHeight);
       const dw=umeImg.naturalWidth*scale, dh=umeImg.naturalHeight*scale;
-      ctx.drawImage(umeImg,(W-dw)/2,heroTop,dw,dh);
+      ctx.drawImage(umeImg,W-dw-72,heroTop+8,dw,dh);
     }
 
-    // ランク
+    // ランクは画像の有無に関係なく画像全体の中央
+    ctx.textAlign="center";
     ctx.fillStyle="#8b1820";
     ctx.font='900 52px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
-    const rankLines=splitLines(ctx,current.rank,880);
-    let rankY=umeImg?505:330;
+    const rankLines=splitLines(ctx,current.rank,820);
+    let rankY=420;
     rankLines.forEach(line=>{
       ctx.fillText(line,W/2,rankY);
       rankY+=62;
@@ -320,7 +325,7 @@ async function saveCard(){
     }).format(current.date);
     ctx.fillStyle="#6b5845";
     ctx.font='600 24px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
-    ctx.fillText((current.name?current.name+"さん　":"")+date,W/2,600);
+    ctx.fillText((current.name?current.name+"さん　":"")+date,W/2,570);
 
     // 本文カード
     roundRect(ctx,innerX,cardTop,innerW,cardH,28,"rgba(255,255,255,.94)","#d7a52f",3);
