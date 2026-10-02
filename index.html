@@ -11,10 +11,10 @@
 .app{max-width:480px;min-height:100vh;margin:auto;background:
 radial-gradient(circle at 50% 0,#fff7d5 0 15%,transparent 36%),
 linear-gradient(180deg,#9b1821 0 15%,#fff7e7 15% 100%);position:relative;overflow:hidden}
-header{padding:18px 18px 22px;text-align:center;color:#fff}
-.kamon{font-size:24px}.title{font-family:serif;font-weight:900;font-size:29px;letter-spacing:.04em;margin:4px 0}.sub{font-size:12px;opacity:.9}
+header{padding:18px 18px 22px;text-align:center;color:#5b1117}
+.kamon{font-size:28px}.title{font-family:serif;font-weight:900;font-size:31px;letter-spacing:.04em;margin:4px 0;color:#651018;text-shadow:0 2px 0 rgba(255,248,232,.9),0 0 10px rgba(255,248,232,.8)}.sub{font-size:13px;font-weight:800;color:#7b242a;text-shadow:0 1px 0 #fff8e8}
 main{padding:0 16px 36px}.card{background:rgba(255,253,245,.96);border:2px solid var(--gold);border-radius:24px;padding:20px 16px;box-shadow:0 14px 36px rgba(65,25,10,.18);text-align:center}
-.char{display:block;max-height:260px;max-width:88%;object-fit:contain;margin:0 auto 8px;filter:drop-shadow(0 8px 8px rgba(0,0,0,.12))}
+.char{display:block;max-height:310px;max-width:94%;object-fit:contain;margin:0 auto 8px;filter:drop-shadow(0 8px 8px rgba(0,0,0,.12))}
 h2{font-family:serif;margin:8px 0 6px;font-size:23px}.lead{font-size:14px;line-height:1.8;margin:6px 0 14px}
 input{width:100%;border:1.5px solid #d9c69d;background:#fffdf8;border-radius:14px;padding:14px;font-size:16px;text-align:center;outline:none}
 button{width:100%;border:0;border-radius:999px;padding:15px 16px;margin-top:12px;font-weight:800;font-size:16px;cursor:pointer}
@@ -23,11 +23,11 @@ button{width:100%;border:0;border-radius:999px;padding:15px 16px;margin-top:12px
 .ghost{background:#fff;border:1.5px solid #d8c69d;color:#5c4837}
 .hidden{display:none!important}.loading{padding:36px 10px}.bell{font-size:60px;animation:ring .35s infinite alternate;transform-origin:50% 0}@keyframes ring{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
 .status{font-weight:800;min-height:50px;margin-top:12px;line-height:1.7}
-.rank{font-family:serif;color:var(--red);font-size:28px;font-weight:900;margin:8px 0 2px}
-.official{font-size:11px;letter-spacing:.16em;color:#8b7352;font-weight:800}
-.resultBox{text-align:left;margin-top:14px}.row{padding:13px 4px;border-top:1px dashed #d8c9a7}.label{font-size:12px;color:#9a1d25;font-weight:900;margin-bottom:4px}.text{font-size:15px;line-height:1.65;font-weight:650}
-.oracle{margin:16px 0 4px;padding:17px 13px;background:#f5ead0;border:1px solid #dbc08a;border-radius:16px;font-family:serif;font-size:18px;font-weight:800;line-height:1.7}
-.umeko{margin-top:12px;background:#fff;border:2px solid #e9c85d;border-radius:16px;padding:12px;font-weight:800;line-height:1.6}
+.rank{font-family:serif;color:var(--red);font-size:34px;font-weight:900;margin:10px 0 5px;line-height:1.35}
+.official{font-size:13px;letter-spacing:.14em;color:#8b7352;font-weight:900}
+.resultBox{text-align:left;margin-top:18px}.row{padding:17px 5px;border-top:1px dashed #d8c9a7}.label{font-size:14px;color:#9a1d25;font-weight:900;margin-bottom:6px}.text{font-size:18px;line-height:1.65;font-weight:700}
+.oracle{margin:20px 0 6px;padding:20px 16px;background:#f5ead0;border:1px solid #dbc08a;border-radius:16px;font-family:serif;font-size:21px;font-weight:800;line-height:1.7}
+.umeko{margin-top:14px;background:#fff;border:2px solid #e9c85d;border-radius:16px;padding:16px;font-size:18px;font-weight:850;line-height:1.65}
 .retrial{font-size:12px;color:#8d7559;margin-top:12px;min-height:20px}.rare{background:linear-gradient(135deg,#fff9cf,#fff,#ffe5a3)}
 footer{text-align:center;font-size:10px;color:#8a775f;padding:18px}
 #shareCanvas{display:none}
@@ -60,7 +60,7 @@ footer{text-align:center;font-size:10px;color:#8a775f;padding:18px}
 <section id="result" class="card hidden">
 <div class="official">本日の正式神託</div>
 <img id="resultChar" class="char" src="UMEKO_OMIKUJI.PNG" alt="結果">
-<div id="rank" class="rank"></div><div id="who"></div>
+<div id="rank" class="rank"></div><div id="who" style="font-size:17px;font-weight:800;line-height:1.5"></div>
 <div id="rows" class="resultBox"></div>
 <div id="oracle" class="oracle"></div>
 <div id="umeko" class="umeko"></div>
