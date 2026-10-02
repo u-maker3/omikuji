@@ -69,6 +69,7 @@ footer{text-align:center;font-size:10px;color:#8a775f;padding:18px}
 <button class="ghost" onclick="shareResult()">友だちにも神託を食らわせる</button>
 <button class="primary" onclick="startDraw()">もう一回、神を呼ぶ</button>
 </section>
+
 <div id="saveModal" class="saveModal hidden" onclick="closeSave(event)">
   <div class="savePanel">
     <h3>証拠できたで🤣</h3>
@@ -77,171 +78,27 @@ footer{text-align:center;font-size:10px;color:#8a775f;padding:18px}
     <button class="closeSave" onclick="closeSave()">閉じる</button>
   </div>
 </div>
-<canvas id="shareCanvas" width="1080" height="1350"></canvas>
+<canvas id="shareCanvas" width="1080" height="1600"></canvas>
 </main>
 <footer>娯楽用のおみくじです。人生の重要事項は神に丸投げせんと自分でも考えてな。</footer>
 </div>
+
 <script>
 const pools={
 overall:[
-"今日は勢いより機嫌。機嫌よう動いた方がだいたいうまくいく。",
-"全部正解にしようとすな。ひとつ進んだら今日は合格。",
-"妙に気になること、それ一回見に行ってみ。答えは現場に落ちてる。",
-"今日は余白が仕事する日。予定パンパンにしたら神も入る隙ない。",
-"人のペース見て焦る必要なし。あんたの時計で進め。",
-"思いついたら小さく着手。壮大な計画書はいらん。",
-"今日は『まあええか』が救命ボートになる。",
-"無理に盛り上げんでええ。静かにええ日も立派なええ日。",
-"後回し一個だけ倒したら流れ変わる。全部は倒さんでええ。",
-"迷ったら簡単な方から。難しくしてる犯人、だいたい自分。",
-"予定外が入ってもキレんな。そっちが本日の本編かもしれん。",
-"今日は見栄より実用。映えんでも役に立ったら勝ち。",
-"言うほど悪くない。脳内会議が大げさなだけ。",
-"焦って決めるより一晩寝かせ。漬物ちゃうけど。",
-"今日は一個断ると一個入ってくる。席を空けとけ。",
-"ちゃんと休むまでが予定。休憩をサボるな。",
-"小さいラッキー拾える日。でっかい奇跡待って見逃すな。",
-"誰かの正解より、自分が続けられる方を選べ。",
-"今日の敵は完璧主義。七割で出してから考え。",
-"なんとなく嫌、は一旦保留で正解。無理に好きにならんでええ。",
-"機嫌悪い時に人生決めるな。まずなんか食べ。",
-"やること増やすより、やらんこと決めた方が早い。",
-"今日は説明しすぎ注意。分かる人には短くても分かる。",
-"一回外の空気吸え。答えが出るとは言うてへん。気分は変わる。",
-"人に会うなら気楽な人。圧強めは本日休業。",
-"昨日の失敗、今日まで連れてこんでええ。",
-"なんかいけそう。その『なんか』を雑に扱うな。",
-"気になる連絡は早めに返せ。寝かせても旨味は増えへん。",
-"今日は足し算より引き算。減らしたら急に見える。",
-"知らんけど、思ってるよりちゃんと進んでる。"
+"今日は勢いより機嫌。機嫌よう動いた方がだいたいうまくいく。","全部正解にしようとすな。ひとつ進んだら今日は合格。","妙に気になること、それ一回見に行ってみ。答えは現場に落ちてる。","今日は余白が仕事する日。予定パンパンにしたら神も入る隙ない。","人のペース見て焦る必要なし。あんたの時計で進め。","思いついたら小さく着手。壮大な計画書はいらん。","今日は『まあええか』が救命ボートになる。","無理に盛り上げんでええ。静かにええ日も立派なええ日。","後回し一個だけ倒したら流れ変わる。全部は倒さんでええ。","迷ったら簡単な方から。難しくしてる犯人、だいたい自分。","予定外が入ってもキレんな。そっちが本日の本編かもしれん。","今日は見栄より実用。映えんでも役に立ったら勝ち。","言うほど悪くない。脳内会議が大げさなだけ。","焦って決めるより一晩寝かせ。漬物ちゃうけど。","今日は一個断ると一個入ってくる。席を空けとけ。","ちゃんと休むまでが予定。休憩をサボるな。","小さいラッキー拾える日。でっかい奇跡待って見逃すな。","誰かの正解より、自分が続けられる方を選べ。","今日の敵は完璧主義。七割で出してから考え。","なんとなく嫌、は一旦保留で正解。無理に好きにならんでええ。","機嫌悪い時に人生決めるな。まずなんか食べ。","やること増やすより、やらんこと決めた方が早い。","今日は説明しすぎ注意。分かる人には短くても分かる。","一回外の空気吸え。答えが出るとは言うてへん。気分は変わる。","人に会うなら気楽な人。圧強めは本日休業。","昨日の失敗、今日まで連れてこんでええ。","なんかいけそう。その『なんか』を雑に扱うな。","気になる連絡は早めに返せ。寝かせても旨味は増えへん。","今日は足し算より引き算。減らしたら急に見える。","知らんけど、思ってるよりちゃんと進んでる。"
 ],
 work:[
-"全部今日やろうとすな。誰も頼んでへん。",
-"メール一通、電話一本。小さい用事から首根っこ掴め。",
-"頼まれてない仕事まで背負うな。善意の過積載や。",
-"今日は新規より仕上げ。途中のやつ成仏させ。",
-"完璧な資料より伝わる一言。相手は論文読みに来てへん。",
-"返事待ちを自分の責任にすな。ボールはもう向こうや。",
-"苦手なやつ午前中に一個だけ。午後の自分が拍手する。",
-"会議で黙りすぎるな。ひと言でええから置いてこい。",
-"今日は段取り八分。いきなり突撃したら二度手間。",
-"誰かに聞いた方が5分で済む。孤独な二時間を選ぶな。",
-"仕事量より順番。火事から消せ。",
-"やる気待ちは欠勤扱い。手だけ先に動かせ。",
-"締切ない仕事ほど今日10分だけ触れ。",
-"今日は見直しが効く。送信ボタンの前に一回読め。",
-"他人の雑さまで回収せんでええ。担当者に返却。",
-"得意なことから勢いつけて、そのまま苦手へ滑り込め。",
-"予定を詰めるより終了時刻を決めろ。",
-"仕事の悩みを夜中に育てるな。営業時間外や。",
-"今日の『あとで』は怪しい。2分で済むなら今。",
-"頼む時は具体的に。察して大会は職場でも中止。",
-"成果出したら自分で認識しろ。誰かの拍手待ち禁止。",
-"忙しいと偉いは別物。暇を作れる方が強い。",
-"一個終わらせてからタブ開け。脳みそ渋滞してる。",
-"今日は愛想より確認。数字と日時は二回見ろ。",
-"苦手な相手には短く丁寧。それ以上サービスせんでよし。",
-"思いつきメモしとけ。今日の雑案、後で化けるかもしれん。",
-"休憩削っても能率は神にならん。",
-"誰かの急ぎが、あんたの緊急とは限らん。",
-"今日は『ここまで』を決める仕事も仕事。",
-"終わったら帰れ。居残り選手権ちゃう。"
+"全部今日やろうとすな。誰も頼んでへん。","メール一通、電話一本。小さい用事から首根っこ掴め。","頼まれてない仕事まで背負うな。善意の過積載や。","今日は新規より仕上げ。途中のやつ成仏させ。","完璧な資料より伝わる一言。相手は論文読みに来てへん。","返事待ちを自分の責任にすな。ボールはもう向こうや。","苦手なやつ午前中に一個だけ。午後の自分が拍手する。","会議で黙りすぎるな。ひと言でええから置いてこい。","今日は段取り八分。いきなり突撃したら二度手間。","誰かに聞いた方が5分で済む。孤独な二時間を選ぶな。","仕事量より順番。火事から消せ。","やる気待ちは欠勤扱い。手だけ先に動かせ。","締切ない仕事ほど今日10分だけ触れ。","今日は見直しが効く。送信ボタンの前に一回読め。","他人の雑さまで回収せんでええ。担当者に返却。","得意なことから勢いつけて、そのまま苦手へ滑り込め。","予定を詰めるより終了時刻を決めろ。","仕事の悩みを夜中に育てるな。営業時間外や。","今日の『あとで』は怪しい。2分で済むなら今。","頼む時は具体的に。察して大会は職場でも中止。","成果出したら自分で認識しろ。誰かの拍手待ち禁止。","忙しいと偉いは別物。暇を作れる方が強い。","一個終わらせてからタブ開け。脳みそ渋滞してる。","今日は愛想より確認。数字と日時は二回見ろ。","苦手な相手には短く丁寧。それ以上サービスせんでよし。","思いつきメモしとけ。今日の雑案、後で化けるかもしれん。","休憩削っても能率は神にならん。","誰かの急ぎが、あんたの緊急とは限らん。","今日は『ここまで』を決める仕事も仕事。","終わったら帰れ。居残り選手権ちゃう。"
 ],
 money:[
-"安いから買う、が一番高くつく日。",
-"財布開く前に一回閉じろ。",
-"ポイント5倍に人生預けんな。",
-"送料無料にするため余計に買うな。送料払った方が安い。",
-"臨時収入より固定費。地味なとこに金おる。",
-"欲しいと必要を同じカゴに入れるな。",
-"今日は値段より使用回数で考え。",
-"買うなら長く使うもん。謎の便利グッズは寝かせ。",
-"セールの赤文字に人格乗っ取られるな。",
-"小銭でも残したら勝ち。金運は派手さだけちゃう。",
-"人付き合いの見栄出費、本日は却下。",
-"払うべきもんは気持ちよく払え。未払いは運より通知が来る。",
-"サブスク一個見直したら神より確実。",
-"財布の中のレシート、そろそろ退去命令。",
-"欲しいもんは24時間寝かせ。まだ欲しかったら再審。",
-"今日は現金の流れを一回見るだけでええ。",
-"節約しすぎて機嫌悪なるなら、適量使え。",
-"ケチる場所そこちゃう。身体と道具は雑に削るな。",
-"ご褒美はええ。毎日記念日にするな。",
-"投資話は勢いで決めんな。分からんもんに金入れるな。",
-"予算決めてから店入れ。店で予算を決めるな。",
-"一円単位より大きい固定費。敵を間違えるな。",
-"今日の金運は『買わんかった』にも宿る。",
-"人のおすすめより自分が使うかどうか。",
-"壊れてへんもん買い替えたくなる病、今日は様子見。",
-"カード明細はホラーちゃう。ちゃんと見ろ。",
-"お得情報追いすぎて時間を失うな。時間も資産。",
-"必要経費と衝動買いを同じ顔で申告すな。",
-"使う時は使う、締める時は締める。全部我慢大会にすな。",
-"今日は財布より判断力を守れ。"
+"安いから買う、が一番高くつく日。","財布開く前に一回閉じろ。","ポイント5倍に人生預けんな。","送料無料にするため余計に買うな。送料払った方が安い。","臨時収入より固定費。地味なとこに金おる。","欲しいと必要を同じカゴに入れるな。","今日は値段より使用回数で考え。","買うなら長く使うもん。謎の便利グッズは寝かせ。","セールの赤文字に人格乗っ取られるな。","小銭でも残したら勝ち。金運は派手さだけちゃう。","人付き合いの見栄出費、本日は却下。","払うべきもんは気持ちよく払え。未払いは運より通知が来る。","サブスク一個見直したら神より確実。","財布の中のレシート、そろそろ退去命令。","欲しいもんは24時間寝かせ。まだ欲しかったら再審。","今日は現金の流れを一回見るだけでええ。","節約しすぎて機嫌悪なるなら、適量使え。","ケチる場所そこちゃう。身体と道具は雑に削るな。","ご褒美はええ。毎日記念日にするな。","投資話は勢いで決めんな。分からんもんに金入れるな。","予算決めてから店入れ。店で予算を決めるな。","一円単位より大きい固定費。敵を間違えるな。","今日の金運は『買わんかった』にも宿る。","人のおすすめより自分が使うかどうか。","壊れてへんもん買い替えたくなる病、今日は様子見。","カード明細はホラーちゃう。ちゃんと見ろ。","お得情報追いすぎて時間を失うな。時間も資産。","必要経費と衝動買いを同じ顔で申告すな。","使う時は使う、締める時は締める。全部我慢大会にすな。","今日は財布より判断力を守れ。"
 ],
 love:[
-"察してほしい大会、本日も開催中止。",
-"好きなら好きでええ。脳内で勝手に最終回まで作るな。",
-"返信速度で愛情測定すな。通信環境まで恋愛に入ってくる。",
-"言いたいことは可愛く言え。試すな。",
-"追いかけすぎたら一回止まれ。恋にも信号ある。",
-"昔の人を美化するな。記憶には加工フィルター付いてる。",
-"不安な時ほど結論急ぐな。",
-"会いたいなら会いたいでええ。駆け引きで迷子になるな。",
-"相手の機嫌を恋愛運に含めるな。",
-"今日は聞く方が進む。尋問にはするな。",
-"理想条件を増やしすぎて入場審査にするな。",
-"好きと都合がいいは別物。そこ見分けろ。",
-"言葉より行動。両方あるならなお良し。",
-"連絡したいなら普通にしろ。暗号文送るな。",
-"無理して好かれるより素で嫌われる方が後が楽。",
-"嫉妬でストーリー作る前に事実確認。",
-"今日は盛るより素直。かわいげ出しとけ。",
-"相手を変える計画より、自分の希望を伝え。",
-"寂しいだけの日に運命認定すな。",
-"一緒にいて疲れるなら、その疲れも情報。",
-"愛情は我慢大会の参加賞ちゃう。",
-"いい感じなら余計なテストを仕掛けるな。",
-"返事来ん時間に人生全部否定された顔すな。",
-"今日は自分を雑に扱う人を追わんでええ。",
-"恋愛以外が充実してても全然ええ日。",
-"笑える相手、大事にしとけ。",
-"好きな人の前で別人になるな。維持費高い。",
-"言わんと分からんことは普通にある。口使え。",
-"縁は追うだけやなく、育てるもん。",
-"今日は恋より自分のご機嫌取る方が先。"
+"察してほしい大会、本日も開催中止。","好きなら好きでええ。脳内で勝手に最終回まで作るな。","返信速度で愛情測定すな。通信環境まで恋愛に入ってくる。","言いたいことは可愛く言え。試すな。","追いかけすぎたら一回止まれ。恋にも信号ある。","昔の人を美化するな。記憶には加工フィルター付いてる。","不安な時ほど結論急ぐな。","会いたいなら会いたいでええ。駆け引きで迷子になるな。","相手の機嫌を恋愛運に含めるな。","今日は聞く方が進む。尋問にはするな。","理想条件を増やしすぎて入場審査にするな。","好きと都合がいいは別物。そこ見分けろ。","言葉より行動。両方あるならなお良し。","連絡したいなら普通にしろ。暗号文送るな。","無理して好かれるより素で嫌われる方が後が楽。","嫉妬でストーリー作る前に事実確認。","今日は盛るより素直。かわいげ出しとけ。","相手を変える計画より、自分の希望を伝え。","寂しいだけの日に運命認定すな。","一緒にいて疲れるなら、その疲れも情報。","愛情は我慢大会の参加賞ちゃう。","いい感じなら余計なテストを仕掛けるな。","返事来ん時間に人生全部否定された顔すな。","今日は自分を雑に扱う人を追わんでええ。","恋愛以外が充実してても全然ええ日。","笑える相手、大事にしとけ。","好きな人の前で別人になるな。維持費高い。","言わんと分からんことは普通にある。口使え。","縁は追うだけやなく、育てるもん。","今日は恋より自分のご機嫌取る方が先。"
 ],
 people:[
-"その人の機嫌まで担当せんでよろしい。",
-"嫌われん努力より、雑に扱われん線引き。",
-"返事に困る話は即答せんでええ。",
-"今日は聞き役七割。背負うのはゼロ割。",
-"圧強い人からは半歩離れ。物理でも心でも。",
-"全員に分かってもらう企画、予算不足で中止。",
-"人の課題まで持ち帰るな。忘れ物として置いてこい。",
-"気楽に話せる人に連絡すると回復する。",
-"モヤっとしたら言葉より距離調整。",
-"噂話に参加しても配当ないで。",
-"ありがとうは早めに。ごめんは必要な分だけ。",
-"頼まれごと、反射で『いいよ』言うな。",
-"今日は説明しても通じん相手を説得せんでええ。",
-"合わん人がおるのは故障ちゃう。",
-"相手の沈黙を勝手に悪訳すな。",
-"会った後ぐったりする人、頻度見直せ。",
-"気遣いと自己犠牲は親戚ちゃう。",
-"褒められたら否定せず受け取れ。返却不可。",
-"今日は人脈より一人とのちゃんとした会話。",
-"言い方ひとつで丸くなる。内容まで曲げんでええ。",
-"苦手な人の分析に時間使いすぎ。",
-"自分を大事にしてくれる人を後回しにすな。",
-"連絡途絶えてる人、必要なら一回だけ軽く投げてみ。",
-"距離置くことも立派なコミュ力。",
-"人の期待を全部叶えたら、自分が留守になる。",
-"今日は余計な一言を飲み込めたら優勝。",
-"相談されたら答えより確認。相手も自分で決めたい。",
-"誰とでも仲良く、は神でも無理。",
-"無理な誘いは断ってええ。予定なしも予定。",
-"大事な人には雑な安心感で雑にせんようにな。"
+"その人の機嫌まで担当せんでよろしい。","嫌われん努力より、雑に扱われん線引き。","返事に困る話は即答せんでええ。","今日は聞き役七割。背負うのはゼロ割。","圧強い人からは半歩離れ。物理でも心でも。","全員に分かってもらう企画、予算不足で中止。","人の課題まで持ち帰るな。忘れ物として置いてこい。","気楽に話せる人に連絡すると回復する。","モヤっとしたら言葉より距離調整。","噂話に参加しても配当ないで。","ありがとうは早めに。ごめんは必要な分だけ。","頼まれごと、反射で『いいよ』言うな。","今日は説明しても通じん相手を説得せんでええ。","合わん人がおるのは故障ちゃう。","相手の沈黙を勝手に悪訳すな。","会った後ぐったりする人、頻度見直せ。","気遣いと自己犠牲は親戚ちゃう。","褒められたら否定せず受け取れ。返却不可。","今日は人脈より一人とのちゃんとした会話。","言い方ひとつで丸くなる。内容まで曲げんでええ。","苦手な人の分析に時間使いすぎ。","自分を大事にしてくれる人を後回しにすな。","連絡途絶えてる人、必要なら一回だけ軽く投げてみ。","距離置くことも立派なコミュ力。","人の期待を全部叶えたら、自分が留守になる。","今日は余計な一言を飲み込めたら優勝。","相談されたら答えより確認。相手も自分で決めたい。","誰とでも仲良く、は神でも無理。","無理な誘いは断ってええ。予定なしも予定。","大事な人には雑な安心感で雑にせんようにな。"
 ],
 doit:["水飲む。まずそこ。","机の上を一か所だけ片付ける。","気になってる連絡を一件返す。","10分だけ外に出る。","今日できたことを三つ数える。","財布の中を見る。怖がるな。","一個だけ断る。","一個だけ終わらせる。","風呂を後回しにせん。","スマホ置いて5分ぼーっとする。","明日の自分にメモを残す。","お気に入りの服を着る。","不要な通知を一個切る。","深呼吸より先に肩を下げる。","食べたいもんをちゃんと食べる。","バッグの中のゴミを出す。","写真フォルダを10枚だけ整理。","誰かにありがとうを送る。","今日の終了時刻を決める。","気になる案をメモする。","靴を揃える。急に神社感。","一回伸びる。猫くらい伸びる。","窓を開ける。","必要な予約を一個取る。","寝る前の充電を忘れん。自分もスマホも。","明日着る服を出す。","やらんことを一個決める。","笑える動画一本だけ見る。一本やぞ。","使ってないアプリ一個消す。","今日は早めに寝る準備だけでもする。"],
 stop:["夜中のネットショッピング。","返事来てないのに追撃三連投。","他人のSNS見て勝手に落ち込む。","全部自分でやる。","腹減ってる時の重大決断。","『どうせ私なんか』の長期公演。","ポイントのための無駄買い。","寝る直前の仕事開始。","昔の黒歴史再上映会。","頼まれてない反省会。","他人の機嫌当てクイズ。","検索しすぎて不安を育てる。","予定の詰め放題。","嫌なことを笑ってごまかす。","一回断られただけで人生終了扱い。","返信文を30分推敲する。","なんでも意味づけする。","『せっかくやから』で余計に買う。","休憩中に仕事する。","会ってない人と脳内喧嘩。","今日の失敗を来月まで持つ。","他人の成功を自分の遅れに換算。","寝不足で元気なフリ。","無料やから貰う。使わんやろ。","一人で結論まで暴走する。","嫌な予感を事実認定する。","5分の用事を5日寝かす。","なんとなくスマホを開く30回目。","食べずに機嫌直そうとする。","神託を都合ええとこだけ採用する。"]
@@ -250,15 +107,19 @@ const oracles=["まあ行ける。知らんけど。","それ、占う前にだ�
 const umeko=["ほな、ぼちぼちいこか。","神さん言うてるけど、採用するかはあんた次第やで。","知らんけど、今日はこれでいこ🤣","神託より先に腹ごしらえちゃう？","それな。うめこも耳痛いわ。","はい、本日の神さんちょい辛口。","ええやん。1ミリで十分や。","神さん、急に現実的やな。","それ出来たら今日は花丸。","無理せん程度にやったれ。","今日は静かに勝ちにいこ。","神に言われんでも分かってたやろ🤣","ほな、余計なもん置いてこ。","大吉待ちせんと、自分でええ日にしよ。","なんか知らんけど、いけそうや。","今日はこれ以上こねくり回さん。","ちゃんと休むんも仕事やで。","神さんより自分の違和感も聞いとき。","全部せんでええ。一個でええ。","はい、神託終了。解散🤣","結果に文句ある人は再審どうぞ。","まあまあ、そんな日もある。","自分の機嫌は自分で回収しよ。","それ、明日のうめこにも言うといて。","運勢より行動ひとつ。これ強い。","神さん、今日ええこと言うやん。","ちょっと笑えたらもう半分勝ち。","知らんけどを付けたら大体やさしくなる。","今日も生きてる。それでまず一票。","ほな、行ってらっしゃい。気ぃつけてな。"];
 const ranks=["超・知らんけど大吉","なんかイケる吉","欲出すな吉","今日は寝とけ吉","調子乗んな吉","黙っといた方が吉","神もよう分からん吉","一回帰ろか凶","先に片付けろ凶","今日は触んな凶"];
 const retry=["","再審請求を受理しました。","まだ納得してへんのか。","神への圧が強い。","好きなん出るまで引く気やろ。","もう結果より執念が勝ってる。"];
+
 let count=0,current=null;
 const $=id=>document.getElementById(id),pick=a=>a[Math.floor(Math.random()*a.length)];
+
 function show(id){["top","loading","result"].forEach(x=>$(x).classList.toggle("hidden",x!==id))}
+
 function startDraw(){
  count++; show("loading");
  const msgs=["神さまに接続しています…","神さま、まだ寝てる可能性があります。","少々お待ちください。","既読は付きました。","なんとか捕まりました。"];
  let i=0;$("status").textContent=msgs[0];
- const t=setInterval(()=>{i++; if(i<msgs.length)$("status").textContent=msgs[i];else{clearInterval(t);draw()}},520);
+ const t=setInterval(()=>{i++;if(i<msgs.length)$("status").textContent=msgs[i];else{clearInterval(t);draw()}},520);
 }
+
 function draw(){
  const rareRoll=Math.random();
  let special=null;
@@ -269,11 +130,21 @@ function draw(){
  else if(rareRoll<.040)special={rank:"神、呆れる。",oracle:"昨日も同じことで悩んでへん？",sad:true};
  else if(rareRoll<.045)special={rank:"神、降臨。",oracle:"来たけど、特にない。",sad:false};
  else if(rareRoll<.050)special={rank:"🌈 超・知らんけど大吉 🌈",oracle:"今日は何しても知らん。せやけど、なんかいけそう。根拠：ない。",sad:false};
- current={rank:special?.rank||pick(ranks),overall:pick(pools.overall),work:pick(pools.work),money:pick(pools.money),love:pick(pools.love),people:pick(pools.people),doit:pick(pools.doit),stop:pick(pools.stop),oracle:special?.oracle||pick(oracles),umeko:special?.rank==="神、降臨。"?"帰るんかい。":pick(umeko),sad:special?.sad||false,name:$("name").value.trim(),date:new Date()};
+
+ current={
+   rank:special?.rank||pick(ranks),overall:pick(pools.overall),work:pick(pools.work),
+   money:pick(pools.money),love:pick(pools.love),people:pick(pools.people),
+   doit:pick(pools.doit),stop:pick(pools.stop),
+   oracle:special?.oracle||pick(oracles),
+   umeko:special?.rank==="神、降臨。"?"帰るんかい。":pick(umeko),
+   sad:special?.sad||false,name:$("name").value.trim(),date:new Date()
+ };
  render();
 }
+
 function render(){
- show("result"); $("rank").textContent=current.rank;
+ show("result");
+ $("rank").textContent=current.rank;
  $("who").textContent=current.name?current.name+"さんへの神託":"";
  $("resultChar").src=current.sad?"UMEKO_SAD.PNG":"UMEKO_OMIKUJI.PNG";
  const data=[["総合運",current.overall],["仕事",current.work],["金",current.money],["恋愛",current.love],["人間関係",current.people],["今日やること",current.doit],["今日やめとくこと",current.stop]];
@@ -282,85 +153,237 @@ function render(){
  $("umeko").textContent="うめこ「"+current.umeko+"」";
  $("retrial").textContent=retry[Math.min(count-1,retry.length-1)];
 }
-function wrap(ctx,text,x,y,max,w=44,line=58){
- let s="",yy=y; for(const ch of text){if(ctx.measureText(s+ch).width>max){ctx.fillText(s,x,yy);s=ch;yy+=line}else s+=ch} if(s)ctx.fillText(s,x,yy);return yy+line;
+
+/* ===== 保存画像：iPhone Safari対策版 =====
+   SVG foreignObject は使わず、Canvasへ直接描画する。
+*/
+function roundRect(ctx,x,y,w,h,r,fill,stroke,lineWidth=1){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+  if(fill){ctx.fillStyle=fill;ctx.fill();}
+  if(stroke){ctx.lineWidth=lineWidth;ctx.strokeStyle=stroke;ctx.stroke();}
 }
-function esc(s){
- return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+function splitLines(ctx,text,maxWidth){
+  const lines=[];
+  let line="";
+  for(const ch of String(text??"")){
+    const test=line+ch;
+    if(line && ctx.measureText(test).width>maxWidth){
+      lines.push(line);
+      line=ch;
+    }else{
+      line=test;
+    }
+  }
+  if(line)lines.push(line);
+  return lines.length?lines:[""];
 }
+
+function drawWrapped(ctx,text,x,y,maxWidth,lineHeight){
+  const lines=splitLines(ctx,text,maxWidth);
+  lines.forEach((line,i)=>ctx.fillText(line,x,y+i*lineHeight));
+  return y+lines.length*lineHeight;
+}
+
+function dashedLine(ctx,x1,y,x2){
+  ctx.save();
+  ctx.beginPath();
+  ctx.setLineDash([10,10]);
+  ctx.strokeStyle="#d8c9a7";
+  ctx.lineWidth=2;
+  ctx.moveTo(x1,y);
+  ctx.lineTo(x2,y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function measureRow(ctx,label,text,textWidth){
+  ctx.font='650 27px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+  const lines=splitLines(ctx,text,textWidth);
+  return Math.max(72,lines.length*42+26);
+}
+
 function saveCard(){
- try{
-   if(!current){ alert("先におみくじ引いてな🤣"); return; }
+  try{
+    if(!current){
+      alert("先におみくじ引いてな🤣");
+      return;
+    }
 
-   const date=new Intl.DateTimeFormat("ja-JP").format(current.date);
-   const items=[
-     ["総合運",current.overall],["仕事",current.work],["金",current.money],
-     ["恋愛",current.love],["人間関係",current.people],
-     ["今日やる",current.doit],["今日やめる",current.stop]
-   ];
+    const canvas=$("shareCanvas");
+    const ctx=canvas.getContext("2d");
+    if(!ctx){
+      alert("画像を作る準備ができやんかった😭");
+      return;
+    }
 
-   const rows=items.map(([a,b])=>`
-     <div style="display:grid;grid-template-columns:170px 1fr;gap:18px;padding:16px 4px;border-top:1px dashed #d8c9a7;line-height:1.55;"><b style="color:#941d25;font-size:23px;">${esc(a)}</b><span style="font-size:25px;font-weight:650;">${esc(b)}</span></div>`).join("");
+    const W=1080;
+    const pad=62;
+    const innerX=pad;
+    const innerW=W-pad*2;
+    const labelW=175;
+    const gap=24;
+    const textX=innerX+34+labelW+gap;
+    const textWidth=innerX+innerW-34-textX;
 
-   const card=`
-   <div xmlns="http://www.w3.org/1999/xhtml" style="
-     width:1000px;min-height:1250px;padding:60px;box-sizing:border-box;
-     background:linear-gradient(#8d151e 0 150px,#fff0c7 150px,#fffaf0 420px);
-     font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic',sans-serif;
-     color:#35271e;">
-     <div style="text-align:center;color:white;font-family:serif;font-weight:900;font-size:54px;">神さん、今日どない？</div>
-     <div style="margin:70px 0 6px;text-align:center;color:#78131a;font-family:serif;font-weight:900;font-size:55px;">${esc(current.rank)}</div>
-     <div style="text-align:center;color:#6b5845;font-size:25px;margin-bottom:28px;">${esc(current.name?current.name+"さん　":"")}${esc(date)}</div>
-     <div style="background:rgba(255,255,255,.84);border:2px solid #d7a52f;border-radius:28px;padding:24px 34px;">
-       ${rows}
-       <div style="margin-top:24px;padding:24px;background:#f1dfb9;border-radius:20px;font-family:serif;font-size:29px;font-weight:800;line-height:1.65;">⛩️ 神の捨て台詞<br/>「${esc(current.oracle)}」</div>
-       <div style="margin-top:16px;padding:20px;background:white;border:2px solid #e9c85d;border-radius:18px;font-size:26px;font-weight:800;line-height:1.6;">うめこ「${esc(current.umeko)}」</div>
-     </div>
-     <div style="text-align:center;color:#806d55;font-size:18px;margin-top:28px;">聞いたことを後悔するおみくじ</div>
-   </div>`;
+    const items=[
+      ["総合運",current.overall],["仕事",current.work],["金",current.money],
+      ["恋愛",current.love],["人間関係",current.people],
+      ["今日やる",current.doit],["今日やめる",current.stop]
+    ];
 
-   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1500">
-     <foreignObject width="1000" height="1500">${card}</foreignObject>
-   </svg>`;
+    // 必要な高さを先に計算
+    ctx.font='650 27px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    let rowsHeight=0;
+    items.forEach(([a,b])=>rowsHeight+=measureRow(ctx,a,b,textWidth));
 
-   const blob=new Blob([svg],{type:"image/svg+xml;charset=utf-8"});
-   const url=URL.createObjectURL(blob);
-   const image=new Image();
+    ctx.font='800 31px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    const oracleLines=splitLines(ctx,"「"+current.oracle+"」",innerW-100);
+    const oracleH=70+oracleLines.length*48+34;
 
-   image.onload=()=>{
-     try{
-       const c=document.createElement("canvas");
-       c.width=1000;c.height=1500;
-       const ctx=c.getContext("2d");
-       ctx.fillStyle="#fffaf0";ctx.fillRect(0,0,c.width,c.height);
-       ctx.drawImage(image,0,0);
-       URL.revokeObjectURL(url);
-       const png=c.toDataURL("image/png");
-       $("savedImage").src=png;
-       $("saveModal").classList.remove("hidden");
-     }catch(err){
-       console.error(err);
-       URL.revokeObjectURL(url);
-       alert("画像化でコケたわ😭");
-     }
-   };
-   image.onerror=()=>{
-     URL.revokeObjectURL(url);
-     alert("保存画像を作れやんかった😭");
-   };
-   image.src=url;
- }catch(err){
-   console.error(err);
-   alert("保存処理でコケたわ😭");
+    ctx.font='800 28px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    const umekoLines=splitLines(ctx,'うめこ「'+current.umeko+'」',innerW-100);
+    const umekoH=Math.max(94,umekoLines.length*44+42);
+
+    const cardTop=390;
+    const cardPadTop=26;
+    const cardPadBottom=30;
+    const cardH=cardPadTop+rowsHeight+oracleH+18+umekoH+cardPadBottom;
+    const footerH=110;
+    const H=Math.max(1600,cardTop+cardH+footerH);
+
+    canvas.width=W;
+    canvas.height=H;
+
+    // 背景
+    ctx.fillStyle="#fffaf0";
+    ctx.fillRect(0,0,W,H);
+
+    const grad=ctx.createLinearGradient(0,0,0,390);
+    grad.addColorStop(0,"#8d151e");
+    grad.addColorStop(.39,"#8d151e");
+    grad.addColorStop(.40,"#fff0c7");
+    grad.addColorStop(1,"#fffaf0");
+    ctx.fillStyle=grad;
+    ctx.fillRect(0,0,W,390);
+
+    // ヘッダー
+    ctx.textAlign="center";
+    ctx.textBaseline="alphabetic";
+    ctx.fillStyle="#ffffff";
+    ctx.font='900 58px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    ctx.fillText("⛩️ 神さん、今日どない？",W/2,105);
+
+    ctx.font='700 23px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    ctx.fillStyle="rgba(255,255,255,.92)";
+    ctx.fillText("― 聞いたことを後悔するおみくじ ―",W/2,151);
+
+    // ランク
+    ctx.fillStyle="#78131a";
+    ctx.font='900 56px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    const rankLines=splitLines(ctx,current.rank,900);
+    let ry=260;
+    rankLines.forEach(line=>{ctx.fillText(line,W/2,ry);ry+=66;});
+
+    const date=new Intl.DateTimeFormat("ja-JP",{year:"numeric",month:"2-digit",day:"2-digit"}).format(current.date);
+    ctx.fillStyle="#6b5845";
+    ctx.font='600 25px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    const nameDate=(current.name?current.name+"さん　":"")+date;
+    ctx.fillText(nameDate,W/2,350);
+
+    // 本文カード
+    roundRect(ctx,innerX,cardTop,innerW,cardH,28,"rgba(255,255,255,.91)","#d7a52f",3);
+
+    let y=cardTop+cardPadTop;
+
+    ctx.textAlign="left";
+    for(const [label,text] of items){
+      dashedLine(ctx,innerX+30,y,innerX+innerW-30);
+      const rowH=measureRow(ctx,label,text,textWidth);
+
+      ctx.fillStyle="#941d25";
+      ctx.font='900 25px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+      ctx.fillText(label,innerX+34,y+46);
+
+      ctx.fillStyle="#35271e";
+      ctx.font='650 27px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+      drawWrapped(ctx,text,textX,y+42,textWidth,42);
+
+      y+=rowH;
+    }
+
+    // 神の捨て台詞
+    const oracleY=y+10;
+    roundRect(ctx,innerX+28,oracleY,innerW-56,oracleH,20,"#f1dfb9",null);
+    ctx.fillStyle="#35271e";
+    ctx.font='800 28px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    ctx.fillText("⛩️ 神の捨て台詞",innerX+58,oracleY+48);
+    ctx.font='800 31px Georgia,"Hiragino Mincho ProN","Yu Mincho",serif';
+    drawWrapped(ctx,"「"+current.oracle+"」",innerX+58,oracleY+99,innerW-116,48);
+
+    // うめこ
+    const umekoY=oracleY+oracleH+18;
+    roundRect(ctx,innerX+28,umekoY,innerW-56,umekoH,18,"#ffffff","#e9c85d",3);
+    ctx.fillStyle="#35271e";
+    ctx.font='800 28px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    drawWrapped(ctx,'うめこ「'+current.umeko+'」',innerX+58,umekoY+54,innerW-116,44);
+
+    // フッター
+    ctx.textAlign="center";
+    ctx.fillStyle="#806d55";
+    ctx.font='600 20px -apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif';
+    ctx.fillText("本日の正式神託｜娯楽用のおみくじです",W/2,H-52);
+
+    // PNG化
+    let png;
+    try{
+      png=canvas.toDataURL("image/png");
+    }catch(err){
+      console.error("toDataURL error",err);
+      alert("画像化でコケたわ😭");
+      return;
+    }
+
+    if(!png || !png.startsWith("data:image/png")){
+      alert("保存画像を作れやんかった😭");
+      return;
+    }
+
+    $("savedImage").src=png;
+    $("saveModal").classList.remove("hidden");
+
+  }catch(err){
+    console.error("saveCard error",err);
+    alert("保存処理でコケたわ😭");
+  }
+}
+
+function closeSave(e){
+  if(e && e.target!==$("saveModal")) return;
+  $("saveModal").classList.add("hidden");
+}
+
+async function shareResult(){
+ if(!current){alert("先におみくじ引いてな🤣");return;}
+ const text=`⛩️ 神さん、今日どない？\n【${current.rank}】\n神「${current.oracle}」\nうめこ「${current.umeko}」`;
+ if(navigator.share){
+   try{await navigator.share({title:"神さん、今日どない？",text,url:location.href})}catch(e){}
+ }else{
+   try{
+     await navigator.clipboard.writeText(text+"\n"+location.href);
+     alert("結果をコピーしたで。友だちに食らわせてきて🤣");
+   }catch(e){
+     alert("共有できやんかった😭");
+   }
  }
 }
-function closeSave(e){
- if(e && e.target!==$("saveModal")) return;
- $("saveModal").classList.add("hidden");
-}
-async function shareResult(){
- const text=`⛩️ 神さん、今日どない？\n【${current.rank}】\n神「${current.oracle}」\nうめこ「${current.umeko}」`;
- if(navigator.share){try{await navigator.share({title:"神さん、今日どない？",text,url:location.href})}catch(e){}}else{await navigator.clipboard.writeText(text+"\n"+location.href);alert("結果をコピーしたで。友だちに食らわせてきて🤣")}
-}
 </script>
-</body></html>
+</body>
+</html>
