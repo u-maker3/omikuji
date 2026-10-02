@@ -31,6 +31,13 @@ button{width:100%;border:0;border-radius:999px;padding:15px 16px;margin-top:12px
 .retrial{font-size:12px;color:#8d7559;margin-top:12px;min-height:20px}.rare{background:linear-gradient(135deg,#fff9cf,#fff,#ffe5a3)}
 footer{text-align:center;font-size:10px;color:#8a775f;padding:18px}
 #shareCanvas{display:none}
+.saveModal{position:fixed;inset:0;background:rgba(30,15,8,.82);z-index:9999;padding:18px;display:flex;align-items:center;justify-content:center}
+.saveModal.hidden{display:none!important}
+.savePanel{width:min(100%,480px);max-height:94vh;overflow:auto;background:#fff8e8;border:2px solid var(--gold);border-radius:24px;padding:16px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.savePanel h3{font-family:serif;margin:2px 0 6px;font-size:21px}
+.saveHelp{font-size:13px;line-height:1.7;margin:0 0 10px;color:#675440}
+#savedImage{display:block;width:100%;height:auto;border-radius:14px;border:1px solid #d8c69d;-webkit-touch-callout:default;user-select:auto}
+.closeSave{margin-top:12px;background:#fff;border:1.5px solid #cdb98f;color:#4f3d2e}
 </style>
 </head>
 <body>
@@ -62,6 +69,14 @@ footer{text-align:center;font-size:10px;color:#8a775f;padding:18px}
 <button class="ghost" onclick="shareResult()">友だちにも神託を食らわせる</button>
 <button class="primary" onclick="startDraw()">もう一回、神を呼ぶ</button>
 </section>
+<div id="saveModal" class="saveModal hidden" onclick="closeSave(event)">
+  <div class="savePanel">
+    <h3>証拠できたで🤣</h3>
+    <p class="saveHelp">下の画像を<strong>長押し</strong>して「写真に保存」してな。</p>
+    <img id="savedImage" alt="保存用おみくじ画像">
+    <button class="closeSave" onclick="closeSave()">閉じる</button>
+  </div>
+</div>
 <canvas id="shareCanvas" width="1080" height="1350"></canvas>
 </main>
 <footer>娯楽用のおみくじです。人生の重要事項は神に丸投げせんと自分でも考えてな。</footer>
@@ -280,7 +295,13 @@ async function saveCard(){
  let y=330; const items=[["総合",current.overall],["仕事",current.work],["金",current.money],["恋愛",current.love],["人間関係",current.people],["やる",current.doit],["やめる",current.stop]];
  for(const [lab,txt] of items){ctx.fillStyle="#941d25";ctx.fillText(lab,75,y);ctx.fillStyle="#35271e";y=wrap(ctx,txt,210,y,790,32,48)+12}
  ctx.fillStyle="#f1dfb9";ctx.fillRect(55,y,970,170);ctx.fillStyle="#4d351d";ctx.font="bold 31px serif";ctx.fillText("神「"+current.oracle+"」",85,y+55);ctx.font="bold 28px sans-serif";wrap(ctx,"うめこ「"+current.umeko+"」",85,y+112,900,28,40);
- c.toBlob(blob=>{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="KAMISAN_OMIKUJI.PNG";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)},"image/png");
+ const img=$("savedImage");
+ img.src=c.toDataURL("image/png");
+ $("saveModal").classList.remove("hidden");
+}
+function closeSave(e){
+ if(e && e.target!==$("saveModal")) return;
+ $("saveModal").classList.add("hidden");
 }
 async function shareResult(){
  const text=`⛩️ 神さん、今日どない？\n【${current.rank}】\n神「${current.oracle}」\nうめこ「${current.umeko}」`;
